@@ -1,6 +1,6 @@
 # Bob
 
-![logo](images/logo.webp?raw=true)
+![logo](images/logo.jpg?raw=true)
 
 Bob is a Fish shell plugin that keeps your command history tidy by automatically removing mistyped or otherwise unwanted commands.
 
@@ -25,7 +25,7 @@ It:
 - Keeps a small buffer of recent commands (default: 2) so you can quickly re-run or correct mistakes.
 - Lets you add custom filters to exclude commands by pattern or custom logic.
 
-📝 Note:  
+📝 Note 📝 :  
 Bob does not remove commands that failed before installation.
 If you want to clear all previous history, you can reset it with (this clears the entire history regardless of exit status. Be careful):
 
@@ -102,7 +102,7 @@ Register your filter by appending its name to `bob_filters`:
 set --append bob_filters your_awesome_filter
 ```
 
-⚠️ Be careful:  
+⚠️ Be careful ⚠️ :  
 Filters run after every command, so avoid slow operations in filters.
 
 ## 🤝 Contributing and origin
