@@ -1,3 +1,5 @@
+status is-interactive || exit
+
 # bob version
 set --global bob_version 1.0.0
 
@@ -18,3 +20,5 @@ set -q bob_allow_previously_successful; or set --global bob_allow_previously_suc
 
 # No active regex patterns by default
 set -q bob_regex_patterns; or set --global bob_regex_patterns
+
+functions -q _bob_on_exit _bob_on_postexec _bob_on_preexec _bob_on_prompt
