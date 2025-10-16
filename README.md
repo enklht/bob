@@ -52,9 +52,6 @@ To keep the session history intact until you exit the shell:
 set bob_purge_only_on_exit true
 ```
 
-💡 Tip 💡:  
-use the `--global` flag when setting a variable to change the setting only for the current session.
-
 ### Built-in filters
 
 Bob ships with two filters by default:
@@ -100,6 +97,29 @@ Register your filter by appending its name to `bob_filters`:
 
 ```fish
 set --append bob_filters your_awesome_filter
+```
+
+#### Example custom filter
+
+This example demonstrates a custom filter that removes commands from history when the current working directory is under /tmp.
+A filter should return 0 to filter (remove) the command, or a non-zero status to keep it.
+
+```fish
+function filter_tmp -a command exit_code
+  # If the current directory is /tmp or a subdirectory, filter the command.
+  if string match -rq '^/tmp($|/)' (pwd)
+    return
+  end
+
+  # Otherwise, keep the command in history.
+  return 1
+end
+```
+
+After defining the function (e.g., in your `config.fish` or a functions file), register it:
+
+```fish
+set --append bob_filters filter_tmp
 ```
 
 ⚠️ Be careful ⚠️ :  
