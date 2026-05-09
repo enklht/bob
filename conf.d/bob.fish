@@ -10,7 +10,7 @@ set -q bob_delay; or set --global bob_delay 2
 set -q bob_purge_only_on_exit; or set --global bob_purge_only_on_exit false
 
 # Add default filters
-set -q bob_filters; or set --global bob_filters bob_filter_failed bob_filter_matched
+set -q bob_filters; or set --global bob_filters bob_filter_failed bob_filter_not_in_history bob_filter_matched
 
 # Consider `0` the only successful exit code by default
 set -q bob_successful_exit_codes; or set --global bob_successful_exit_codes 0
