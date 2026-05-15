@@ -1,4 +1,4 @@
-status is-interactive || exit
+status is-interactive; or return
 
 # bob version
 set --global bob_version 1.0.0
@@ -9,8 +9,11 @@ set -q bob_delay; or set --global bob_delay 2
 # Purge entries both after `bob_delay` entries and on exit by default
 set -q bob_purge_only_on_exit; or set --global bob_purge_only_on_exit false
 
+# Disable debug output by default
+set -q bob_debug; or set --global bob_debug false
+
 # Add default filters
-set -q bob_filters; or set --global bob_filters bob_filter_failed bob_filter_not_in_history bob_filter_matched
+set -q bob_filters; or set --global bob_filters bob_filter_succeeded bob_filter_in_history bob_filter_regex
 
 # Consider `0` the only successful exit code by default
 set -q bob_successful_exit_codes; or set --global bob_successful_exit_codes 0
@@ -19,6 +22,6 @@ set -q bob_successful_exit_codes; or set --global bob_successful_exit_codes 0
 set -q bob_allow_previously_successful; or set --global bob_allow_previously_successful true
 
 # No active regex patterns by default
-set -q bob_regex_patterns; or set --global bob_regex_patterns
+set -q bob_regex_whitelist; or set --global bob_regex_whitelist
 
 functions -q _bob_on_exit _bob_on_postexec _bob_on_preexec _bob_on_prompt

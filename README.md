@@ -21,9 +21,9 @@ fisher install enklht/bob
 Use your shell normally; Bob runs in the background and keeps your history clean.
 It:
 
-- Automatically filters out failed commands (unless the same command was previously successful and allowed).
+- Automatically removes failed commands after a short delay (unless the command already exists in history and is allowed).
 - Keeps a small buffer of recent commands (default: 2) so you can quickly re-run or correct mistakes.
-- Lets you add custom filters to exclude commands by pattern or custom logic.
+- Lets you add custom filters that keep commands in history by matching patterns or custom logic.
 
 📝 Note 📝 :  
 Bob does not remove commands that failed before installation.
@@ -54,32 +54,32 @@ set bob_purge_only_on_exit true
 
 ### Built-in filters
 
-Bob ships with two filters by default:
+Bob ships with three filters by default:
 
-- `bob_filter_failed`: filters out commands with non-zero exit codes (configurable).
-- `bob_filter_matched`: filters commands that match one or more regex patterns.
+- `bob_filter_succeeded`: keeps commands with exit codes considered successful.
+- `bob_filter_in_history`: keeps commands that already existed in history (configurable).
+- `bob_filter_regex`: keeps commands that match one or more regex patterns.
 
 Configuration examples (which filter they apply to):
 
-- Settings for `bob_filter_failed`:
+- Settings for `bob_filter_succeeded`:
 
 ```fish
-# Which exit codes are treated as successful by bob_filter_failed
+# Which exit codes are treated as successful by bob_filter_succeeded
 # default: 0
 set bob_successful_exit_codes 0 127
 
-# If false, bob_filter_failed will filter out failed commands even if they
-# were previously successful (i.e., present earlier in history).
+# If false, bob_filter_in_history will not keep commands that already exist in history.
 # default: true
 set bob_allow_previously_successful false
 ```
 
-- Settings for `bob_filter_matched`:
+- Settings for `bob_filter_regex`:
 
 ```fish
-# Regex patterns used by bob_filter_matched; any matching command will be filtered.
+# Regex patterns used by bob_filter_regex; any matching command will be kept.
 # default: empty
-set bob_regex_patterns '(?:\d{1,3}\.){3}\d{1,3}'
+set bob_regex_whitelist '(?:\d{1,3}\.){3}\d{1,3}'
 ```
 
 ### Custom filters
@@ -90,7 +90,7 @@ A filter is a Fish function that receives two positional arguments:
 1. `command`: the exact command string entered
 2. `exit_code`: the command's exit status
 
-Return exit status 0 to filter (remove) the command, or a non-zero value to keep it in history.
+Return exit status 0 to keep the command in history, or a non-zero value to allow Bob to remove it.
 You can define your custom filter in `config.fish` or in the `functions` directory as a standalone function.
 
 Register your filter by appending its name to `bob_filters`:
@@ -101,17 +101,17 @@ set --append bob_filters your_awesome_filter
 
 #### Example custom filter
 
-This example demonstrates a custom filter that removes commands from history when the current working directory is under /tmp.
-A filter should return 0 to filter (remove) the command, or a non-zero status to keep it.
+This example demonstrates a custom filter that keeps commands in history when the current working directory is under /tmp.
+A filter should return 0 to keep the command, or a non-zero status to allow Bob to remove it.
 
 ```fish
 function filter_tmp -a command exit_code
-  # If the current directory is /tmp or a subdirectory, filter the command.
+  # If the current directory is /tmp or a subdirectory, keep the command.
   if string match -rq '^/tmp($|/)' (pwd)
     return
   end
 
-  # Otherwise, keep the command in history.
+  # Otherwise, allow Bob to remove it.
   return 1
 end
 ```

@@ -9,9 +9,18 @@ function _bob_on_postexec --on-event fish_postexec -a command
     # Run filters
     for filter in $bob_filters
         if $filter "$command" $exit_code
-            set --prepend --global _bob_queue "$command"
+            if test "$bob_debug" = true
+                echo [bob] "$filter" succeeded
+                echo [bob] ignoring
+            end
+            set --prepend --global _bob_queue ''
             return
         end
     end
-    set --prepend --global _bob_queue ''
+
+    if test "$bob_debug" = true
+        echo [bob] all filters failed
+        echo [bob] queueing
+    end
+    set --prepend --global _bob_queue "$command"
 end
