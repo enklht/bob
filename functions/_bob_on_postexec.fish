@@ -6,21 +6,33 @@ function _bob_on_postexec --on-event fish_postexec -a command
         set --erase _bob_queue[$index]
     end
 
-    # Run filters
-    for filter in $bob_filters
-        if $filter "$command" $exit_code
+    # Keep rules (whitelist)
+    for rule in $bob_keep_rules
+        if $rule "$command" $exit_code
             if test "$bob_debug" = true
-                echo [bob] "$filter" succeeded
-                echo [bob] ignoring
+                echo [bob] keep rule matched: "$rule"
+                echo [bob] keeping
             end
             set --prepend --global _bob_queue ''
             return
         end
     end
 
-    if test "$bob_debug" = true
-        echo [bob] all filters failed
-        echo [bob] queueing
+    # Drop rules (blacklist)
+    for rule in $bob_drop_rules
+        if $rule "$command" $exit_code
+            if test "$bob_debug" = true
+                echo [bob] drop rule matched: "$rule"
+                echo [bob] dropping
+            end
+            set --prepend --global _bob_queue "$command"
+            return
+        end
     end
-    set --prepend --global _bob_queue "$command"
+
+    if test "$bob_debug" = true
+        echo [bob] no rule matched
+        echo [bob] keeping
+    end
+    set --prepend --global _bob_queue ''
 end
